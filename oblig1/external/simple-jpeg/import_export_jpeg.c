@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
+/*#include <malloc.h>*/
 
 /* Include file for users of JPEG library */
 

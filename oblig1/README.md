@@ -1,3 +1,4 @@
+### Exercise
 To complete oblig 1 you have to first write a serial program
 by filling out the serial_main.c file in the serial/
 directory and finally write a parallel program by filling
@@ -15,3 +16,14 @@ compile the programs by typing "make" in the terminal.
 When you are ready to deliver you enter the base directory
 and type "make delivery" in the terminal. A tarball with
 your updated files will then be created ready for delivery.
+
+### Build
+To build the source code you can use the supplied CMake file:
+
+```
+$ mkdir build && cd build
+$ cmake ..
+$ make
+```
+
+Executables will then be available in the `build` folder.

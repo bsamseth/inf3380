@@ -3,9 +3,7 @@ project(oblig1)
  
 enable_language(C)
 
-Set(CMAKE_CXX_FLAGS "-std=c++0x -Wall -O0 -g3")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-
+set(CMAKE_C_FLAGS "-Wall -O2")
 
 include_directories(
 	/usr/include/malloc/malloc.h

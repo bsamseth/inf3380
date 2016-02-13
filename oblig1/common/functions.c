@@ -40,35 +40,36 @@ void convert_image_to_jpeg(const Image *u, unsigned char* image_chars) {
 
 
 void iso_diffusion_denoising(Image* u, Image* u_bar, float kappa, int iters) {
-  // first copy boundry values from u to u_bar
+  float** A = u->image_data; // used for shorthand
+  float** B = u_bar->image_data;
+    
+  // first copy boundry values from u=A to u_bar=B
   for (int i = 0; i < u->m; i++) {
-    u_bar->image_data[i][0] = u->image_data[i][0];
-    u_bar->image_data[i][u->n-1] = u->image_data[i][u->n-1];
+    B[i][0] = A[i][0];
+    B[i][u->n-1] = A[i][u->n-1];
   }
   for (int j = 1; j < u->n-1; j++) {
-    u_bar->image_data[0][j] = u->image_data[0][j];
-    u_bar->image_data[u->m-1][j] = u->image_data[u->m-1][j];
+    B[0][j] = A[0][j];
+    B[u->m-1][j] = A[u->m-1][j];
   }
-  float** A = u->image_data; // used for shorthand
-
+  
   int counter = 0;
   while (counter < iters) {
+    // perform one iteration of the transformation
+    // note that only inner pixels are modified
     for (int i = 1; i < u->m-1; i++) {
       for (int j = 1; j < u->n-1; j++) {
-	u_bar->image_data[i][j] = A[i][j] + kappa * (A[i-1][j]
-						     + A[i][j-1]
-						     - 4*A[i][j]
-						     + A[i+1][j]
-						     + A[i][j+1] );
+        B[i][j] = A[i][j] + kappa * (A[i-1][j] + A[i][j-1]
+				     - 4*A[i][j]
+				     + A[i+1][j] + A[i][j+1] );
       }
     }
 
     if (++counter < iters) {
-      for (int i = 1; i < u->m-1; i++) {
-	for (int j = 1; j < u->n-1; j++) {
-	  u->image_data[i][j] = u_bar->image_data[i][j];
-	}
-      }
+      // update u for new iteration
+      Image* tmp = u;
+      u = u_bar;
+      u_bar = tmp;
     }
   }
 }

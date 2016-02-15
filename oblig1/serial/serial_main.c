@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "jpeglib.h"
 #include "functions.h"
 
-// make use of two functions from the simplejpeg library
+/* make use of two functions from the simplejpeg library */
 void import_JPEG_file(const char *filename, unsigned char **image_chars,
                       int *image_height, int *image_width,
                       int *num_components);
@@ -34,30 +35,32 @@ int main(int argc, char *argv[])
     printf("Usage: %s iters kappa input_file output_file\n", argv[0]);
     exit(1);
   }
+
+
+  clock_t begin;
+  double total_time;
+  begin = clock();
   
   /* ... */
-  printf("Importing image from file ...\n");
   import_JPEG_file(input_jpeg_filename, &image_chars, &m, &n, &c);
 
-  printf("Allocating space for Images ...\n");
   allocate_image (&u, m, n);
   allocate_image (&u_bar, m, n);
 
-  printf("Converting jpeg to Image ...\n");
   convert_jpeg_to_image (image_chars, &u);
 
-  printf("Performing %d isotropic duffusions ...\n", iters);
+  printf("Performing %d isotropic diffusions ...\n", iters);
   iso_diffusion_denoising (&u, &u_bar, kappa, iters);
 
-  printf("Converting Image to jpeg ...\n");
   convert_image_to_jpeg (&u_bar, image_chars);
 
-  printf("Deallocating Images...\n");
   deallocate_image (&u);
   deallocate_image (&u_bar);
 
-  printf("Exporting jpeg ...\n");
   export_JPEG_file(output_jpeg_filename, image_chars, m, n, c, 75);
 
+  total_time = (double) (clock() - begin) / CLOCKS_PER_SEC;
+  printf("Total execution time: %g\n", total_time);
+  
   return 0;
 }

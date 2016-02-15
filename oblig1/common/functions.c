@@ -4,7 +4,6 @@
 #include "functions.h"
 
 void allocate_image(Image* u, int m, int n) {
-  // u = (Image *) malloc(sizeof(Image));
   u->m = m;
   u->n = n;
   u->image_data = (float**) malloc(m * sizeof(float*));
@@ -38,12 +37,11 @@ void convert_image_to_jpeg(const Image *u, unsigned char* image_chars) {
   }
 }
 
-
 void iso_diffusion_denoising(Image* u, Image* u_bar, float kappa, int iters) {
-  float** A = u->image_data; // used for shorthand
+  float** A = u->image_data; /* used for shorthand */
   float** B = u_bar->image_data;
-    
-  // first copy boundry values from u=A to u_bar=B
+
+  /* first copy boundry values from u=A to u_bar=B */
   for (int i = 0; i < u->m; i++) {
     B[i][0] = A[i][0];
     B[i][u->n-1] = A[i][u->n-1];
@@ -53,10 +51,9 @@ void iso_diffusion_denoising(Image* u, Image* u_bar, float kappa, int iters) {
     B[u->m-1][j] = A[u->m-1][j];
   }
   
-  int counter = 0;
-  while (counter < iters) {
-    // perform one iteration of the transformation
-    // note that only inner pixels are modified
+  for (int counter = 0; counter < iters; counter++) {
+    /* perform one iteration of the transformation
+     * note that only inner pixels are modified */
     for (int i = 1; i < u->m-1; i++) {
       for (int j = 1; j < u->n-1; j++) {
         B[i][j] = A[i][j] + kappa * (A[i-1][j] + A[i][j-1]
@@ -65,11 +62,10 @@ void iso_diffusion_denoising(Image* u, Image* u_bar, float kappa, int iters) {
       }
     }
 
-    if (++counter < iters) {
-      // update u for new iteration
-      Image* tmp = u;
-      u = u_bar;
-      u_bar = tmp;
-    }
-  }
+    /* update for a new iteration */
+    for (int i = 1; i < u->m; i++) 
+      for (int j = 1; j < u->n; j++) 
+	u->image_data[i][j] = u_bar->image_data[i][j];
+  }  
 }
+

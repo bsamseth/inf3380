@@ -5,6 +5,10 @@ enable_language(C)
 
 set(CMAKE_C_FLAGS "-Wall -O2")
 
+find_package(MPI)
+include_directories(SYSTEM ${MPI_INCLUDE_PATH})
+
+
 include_directories(
 	/usr/include/malloc/malloc.h
 	${PROJECT_SOURCE_DIR}/common
@@ -53,5 +57,5 @@ add_dependencies(
 
 target_link_libraries(denoise_serial simple_jpeg functions)
 
-target_link_libraries(denoise_parallel simple_jpeg functions)
+target_link_libraries(denoise_parallel simple_jpeg functions ${MPI_C_LIBRARIES})
 

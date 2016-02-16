@@ -10,7 +10,7 @@ $ ./program number_of_iterations kappa_value infile outfile
 ```
 
 ### Build
-To build the source code you can use the supplied [CMake file](CMakelists.txt) (while in this folder):
+To build the source code you can use the supplied [CMake file](CMakeLists.txt) (while in this folder):
 
 ```
 $ mkdir build && cd build

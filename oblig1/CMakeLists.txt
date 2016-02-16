@@ -65,3 +65,8 @@ target_link_libraries(denoise_serial simple_jpeg functions)
 
 target_link_libraries(denoise_parallel simple_jpeg functions ${MPI_C_LIBRARIES})
 
+
+add_custom_target(
+    delivery
+    COMMAND tar cvzf inf3380_oblig1.tar.gz ${PROJECT_SOURCE_DIR}/*
+    )

@@ -16,7 +16,9 @@ include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
 
 include_directories(
-	/usr/include/malloc/malloc.h
+	/usr/include/malloc/malloc.h # malloc not found without this on my machine.
+				     # In case the path is incorect on your machine
+				     # consider trying without it, or specifying your path
 	${PROJECT_SOURCE_DIR}/common
 	${PROJECT_SOURCE_DIR}/serial
 	${PROJECT_SOURCE_DIR}/parallel

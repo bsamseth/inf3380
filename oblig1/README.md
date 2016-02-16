@@ -14,11 +14,12 @@ To build the source code you can use the supplied [CMake file](CMakeLists.txt) (
 
 ```
 $ mkdir build && cd build
-$ cmake ..   # ".." is location of CMakelists.txt
+$ cmake [-Ddebug=ON/OFF] ..   # ".." is location of CMakelists.txt
 $ make
 ```
-
 Executables will then be available in the `build` folder.
+
+The option to CMake is optional and decides whether to use `-O2` or `-g` as compile flags. It defaults to `OFF`.
 
 If you have been supplied with a tar-ball then the build directory should be present. For any updates to the code
 it is sufficient to just run `make`. 

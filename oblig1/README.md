@@ -1,31 +1,38 @@
 ### Exercise
-To complete oblig 1 you have to first write a serial program
-by filling out the `serial_main.c` file in the [serial/](serial/)
-directory and finally write a parallel program by filling
-out the `parallel_main.c` file in the [parallel/](parallel/) directory.
+Make a program that uses isotropic diffusion to denoise a JPEG-image. This should be
+done both in a serial program, [serial_main.c](serial/serial_main.c), and in a parallel
+program, [parallel_main.c](parallel/parallel_main.c). 
 
-The two programs shall perform an iso diffusion denoising on
-a JPEG image. The two programs shall also accept the
-following parameters (in order)
+The programs should take the following input:
 
 ```
 $ ./program number_of_iterations kappa_value infile outfile
 ```
 
-When you are in the serial/ or parallel/ directories you may
-compile the programs by typing "make" in the terminal.
-
-When you are ready to deliver you enter the base directory
-and type "make delivery" in the terminal. A tarball with
-your updated files will then be created ready for delivery.
-
 ### Build
-To build the source code you can use the supplied CMake file (while in the current folder):
+To build the source code you can use the supplied [CMake file](CMakelists.txt) (while in this folder):
 
 ```
 $ mkdir build && cd build
-$ cmake ..
+$ cmake ..   # ".." is location of CMakelists.txt
 $ make
 ```
 
 Executables will then be available in the `build` folder.
+
+If you have been supplied with a tar-ball then the build directory should be present. For any updates to the code
+it is sufficient to just run `make`. 
+
+### Running
+The serial program can be run directly 
+
+```
+$ ./denoise_serial number_of_iterations kappa_value infile outfile
+```
+
+For the parallel you should run the executable with `mpirun`:
+
+```
+$ mpirun -n number_of_process denoise_parallel number_of_iterations kappa infile outfile
+```
+

@@ -3,7 +3,13 @@ project(oblig1)
  
 enable_language(C)
 
-set(CMAKE_C_FLAGS "-Wall -O2")
+option(debug "debug" OFF)
+
+if (debug)
+     set(CMAKE_C_FLAGS "-Wall -g")
+else ()
+     set(CMAKE_C_FLAGS "-Wall -O2")
+endif()
 
 find_package(MPI)
 include_directories(SYSTEM ${MPI_INCLUDE_PATH})

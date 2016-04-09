@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 2.8)
-project(PROJECT_NAME)
- 
+project(matrixMultiply)
+
 enable_language(C CXX)
 
 option(debug "Use debugging flag" ON)
 option(coverage "Use coverage flag" OFF)
 
-set(CMAKE_CXX_FLAGS "-std=c++0x -Wall")
+set(CMAKE_C_FLAGS "-Wall")
 
 if (debug)
-     set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g")
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
      if (coverage)
-          set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+          set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
      endif()
 else ()
      set(CMAKE_C_FLAGS "-Wall -O2")
@@ -26,7 +26,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/external/googletest/include
     )
 
-file(GLOB SOURCES "src/*.cpp")
+file(GLOB SOURCES "src/*.c")
 file(GLOB TESTFILES "tests/*.cpp")
 
 add_library(
@@ -66,8 +66,8 @@ target_link_libraries(
     pthread
     )
 
- 
-add_executable(main.x app/main.cpp)
+
+add_executable(main.x app/main.c)
 
 add_dependencies(main.x engine)
 
@@ -78,7 +78,7 @@ add_custom_target(
     coverage
     COMMAND cd ${PROJECT_SOURCE_DIR}/build
     COMMAND lcov --directory ${PROJECT_SOURCE_DIR}/build --capture --output-file coverage.info # capture coverage info
-    COMMAND lcov --remove coverage.info 'tests/*' 'app/*' 'external/*' 'cmake/*' '/usr/*' --output-file coverage.info 
+    COMMAND lcov --remove coverage.info 'tests/*' 'app/*' 'external/*' 'cmake/*' '/usr/*' --output-file coverage.info
     COMMAND lcov --list coverage.info
     COMMAND genhtml coverage.info
     COMMAND google-chrome-stable index.html&

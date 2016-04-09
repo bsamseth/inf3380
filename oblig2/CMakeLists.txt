@@ -6,7 +6,7 @@ enable_language(C CXX)
 option(debug "Use debugging flag" ON)
 option(coverage "Use coverage flag" OFF)
 
-set(CMAKE_C_FLAGS "-Wall")
+set(CMAKE_C_FLAGS "-Wall -std=c99")
 
 if (debug)
      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")

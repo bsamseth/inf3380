@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 project(matrixMultiply)
 
 enable_language(C)
+find_package(MPI)
+include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
 option(debug "Use debugging flag" ON)
 option(coverage "Use coverage flag" OFF)
@@ -30,7 +32,7 @@ file(GLOB TESTFILES "tests/*.c")
 add_library(engine ${SOURCES})
 
 add_executable(main.x app/main.c)
-target_link_libraries(main.x engine)
+target_link_libraries(main.x engine ${MPI_C_LIBRARIES})
 
 add_executable(unit_tests.x ${TESTFILES})
 target_link_libraries(unit_tests.x engine)

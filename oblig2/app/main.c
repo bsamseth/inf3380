@@ -7,7 +7,6 @@
 #include "matrixalloc.h"
 #include "matrixmultiply.h"
 
-void print_matrix(double** A, int m, int n);
 
 int main() {
 
@@ -16,7 +15,7 @@ int main() {
     const int n = 3;
     //const int MAX_VALUE = 10;
 
-    double **A, **B, **C;
+    double *A, *B, *C;
     alloc_matrix(&A, m, l);
     alloc_matrix(&B, l, n);
     alloc_matrix(&C, m, n);

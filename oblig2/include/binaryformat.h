@@ -5,8 +5,8 @@
 #include "stdlib.h"
 #include "matrixalloc.h"
 
-void read_matrix_binaryformat (char* filename, double*** matrix, int* num_rows, int* num_cols);
+void read_matrix_binaryformat (char* filename, double** matrix, int* num_rows, int* num_cols);
 
-void write_matrix_binaryformat (char* filename, double** matrix, int num_rows, int num_cols);
+void write_matrix_binaryformat (char* filename, double* matrix, int num_rows, int num_cols);
 
 #endif

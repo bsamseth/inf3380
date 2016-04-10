@@ -1,13 +1,21 @@
+# Image Denoising
+
+This project aims to turn an image full of white noise into at smoother, better looking version.
+![Noisy image](fig/mona_lisa_noisy.jpg?raw=true "Noisy version")
+![Denoised image](fig/mona_lisa_denoised.jpg?raw=true "Denoised version")
+
 ### Exercise
 Make a program that uses isotropic diffusion to denoise a JPEG-image. This should be
 done both in a serial program, [serial_main.c](serial/serial_main.c), and in a parallel
-program, [parallel_main.c](parallel/parallel_main.c). 
+program, [parallel_main.c](parallel/parallel_main.c).
 
 The programs should take the following input:
 
 ```
 $ ./program number_of_iterations kappa_value infile outfile
 ```
+
+
 
 ### Build
 To build the source code you can use the supplied [CMake file](CMakeLists.txt) (while in this folder):
@@ -22,10 +30,10 @@ Executables will then be available in the `build` folder.
 The option to CMake is optional and decides whether to use `-O2` or `-g` as compile flags. It defaults to `OFF`.
 
 If you have been supplied with a tar-ball then the build directory should be present. For any updates to the code
-it is sufficient to just run `make`. 
+it is sufficient to just run `make`.
 
 ### Running
-The serial program can be run directly 
+The serial program can be run directly
 
 ```
 $ ./denoise_serial number_of_iterations kappa_value infile outfile

@@ -1,8 +1,8 @@
 # Image Denoising
 
 This project aims to turn an image full of white noise into at smoother, better looking version.
-![Noisy image](fig/mona_lisa_noisy.jpg?raw=true "Noisy version")
-![Denoised image](fig/mona_lisa_denoised.jpg?raw=true "Denoised version")
+<img src="fig/mona_lisa_noisy.jpg?raw=true" alt="Noisy version" height="500px"/>
+<img src="fig/mona_lisa_denoised.jpg?raw=true" alt="Denoised version" height="500px"/>
 
 ### Exercise
 Make a program that uses isotropic diffusion to denoise a JPEG-image. This should be

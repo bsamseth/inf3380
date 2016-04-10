@@ -4,5 +4,6 @@
 void print_matrix(double* A, int m, int n);
 void rand_mat(double* A, int m, int n, int MAX_VALUE);
 void std_mat(double* A, int m, int n);
+int is_near(double a, double b, double eps);
 
 #endif

@@ -28,6 +28,7 @@ install:
   - wget http://sourceforge.net/projects/arma/files/armadillo-6.600.4.tar.gz
   - tar xf armadillo-6.600.4.tar.gz
   - cd armadillo-6.600.4 && cmake . && make && sudo make install && cd -
+  - sudo apt-get install libopenmpi-dev
 
 before_script:
   - lcov --version

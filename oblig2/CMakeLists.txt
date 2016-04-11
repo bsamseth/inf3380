@@ -8,7 +8,7 @@ include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 option(debug "Use debugging flag" ON)
 option(coverage "Use coverage flag" OFF)
 
-set(CMAKE_C_FLAGS "-Wall -std=c99")
+set(CMAKE_C_FLAGS "-Wall -std=c99 -fopenmp")
 
 if (debug)
      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
@@ -33,6 +33,12 @@ add_library(engine ${SOURCES})
 
 add_executable(main.x app/main.c)
 target_link_libraries(main.x engine ${MPI_C_LIBRARIES})
+
+add_executable(read_print.x app/read_print.c)
+target_link_libraries(read_print.x engine)
+
+add_executable(write_mat.x app/write_mat.c)
+target_link_libraries(write_mat.x engine)
 
 add_executable(unit_tests.x ${TESTFILES})
 target_link_libraries(unit_tests.x engine)

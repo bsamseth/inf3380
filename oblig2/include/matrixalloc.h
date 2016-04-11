@@ -6,6 +6,6 @@
 
 void alloc_matrix(double** A, int rows, int cols);
 
-void dealloc_matrix(double* A, int rows);
+void dealloc_matrix(double* A);
 
 #endif

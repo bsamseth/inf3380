@@ -4,6 +4,7 @@
 #include "math.h"
 
 #include "debug.h"
+#include "binaryformat.h"
 
 void print_matrix(double* A, int m, int n) {
     for (int i = 0; i < m; i++) {
@@ -32,4 +33,21 @@ void std_mat(double* A, int m, int n) {
 
 int is_near(double a, double b, double eps) {
     return fabs(a-b) < eps;
+}
+
+int check_equal_content(char *file1, char *file2) {
+    int m_A, n_A, m_B, n_B;
+    double *A, *B;
+
+    read_matrix_binaryformat(file1, &A, &m_A, &n_A);
+    read_matrix_binaryformat(file2, &B, &m_B, &n_B);
+
+    if (m_A != m_B || n_A != n_B) {
+        return 0;
+    }
+    for (int i = 0; i < m_A*n_A; i++) {
+        if (!is_near(A[i], B[i], 0.001*A[i]))
+            return 0;
+    }
+    return 1;
 }

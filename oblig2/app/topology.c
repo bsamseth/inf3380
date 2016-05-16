@@ -10,8 +10,8 @@
 #include "math.h"
 #include "mpi.h"
 
-void MatrixMatrixMultiply(int n, double *a, double *b, double *c, MPI_Comm comm);
-void MatrixMultiply(int n, double *a, double *b, double *c);
+void MatrixMatrixMultiply(int my_m, int my_l, int my_n, double *a, double *b, double *c, MPI_Comm comm);
+void MatrixMultiply(int m, int l, int n, double *a, double *b, double *c);
 void print_matrix(double *A, int m, int n);
 void read_matrix_binaryformat (char* filename, double** matrix, int* num_rows, int* num_cols);
 void alloc_matrix(double** A, int rows, int cols);
@@ -75,80 +75,102 @@ int main(int argc, char* argv[]) {
     if (my_rank == 0) {
 
         /* Delegate submatrices to workers */
-        int ioffset = 0, joffset = 0;
+        int ioffsetA = 0, joffsetA = 0;
+        int ioffsetB = 0, joffsetB = 0;
         for (int worker = 1; worker < num_procs; worker++) {
-            double* subA, *subB;
-            alloc_matrix(&subA, n, n);
-            alloc_matrix(&subB, n, n);
 
+            int my_m = m / sqp;
+            int my_l = l / sqp;
             int my_n = n / sqp;
-            for (int i = 0; i < my_n; i++) {
+
+            double* subA, *subB;
+            alloc_matrix(&subA, my_m, my_l);
+            alloc_matrix(&subB, my_l, my_n);
+
+            for (int i = 0; i < my_m; i++) {
+                for (int j = 0; j < my_l; j++) {
+                    subA[i*my_l + j] = A[(i+ioffsetA) * l + (j + joffsetA)];
+                }
+            }
+            for (int i = 0; i < my_l; i++) {
                 for (int j = 0; j < my_n; j++) {
-                    subA[i*my_n + j] = A[(i+ioffset) * n + (j + joffset)];
-                    subB[i*my_n + j] = B[(i+ioffset) * n + (j + joffset)];
+                    subB[i*my_n + j] = B[(i+ioffsetB) * n + (j + joffsetB)];
                 }
             }
 
+
+
             if (worker % sqp == 0) {
-                ioffset += my_n;
-                joffset = 0;
+                ioffsetA += my_m;
+                ioffsetB += my_l;
+                joffsetA = joffsetB = 0;
             } else {
-                joffset += my_n;
+                joffsetA += my_l;
+                joffsetB += my_n;
             }
 
+            MPI_Send(&my_m, 1, MPI_INT, worker, tag, MPI_COMM_WORLD);
+            MPI_Send(&my_l, 1, MPI_INT, worker, tag, MPI_COMM_WORLD);
             MPI_Send(&my_n, 1, MPI_INT, worker, tag, MPI_COMM_WORLD);
-            MPI_Send(subA, my_n*my_n, MPI_DOUBLE, worker, tag, MPI_COMM_WORLD);
-            MPI_Send(subB, my_n*my_n, MPI_DOUBLE, worker, tag, MPI_COMM_WORLD);
+            MPI_Send(subA, my_m*my_l, MPI_DOUBLE, worker, tag, MPI_COMM_WORLD);
+            MPI_Send(subB, my_l*my_n, MPI_DOUBLE, worker, tag, MPI_COMM_WORLD);
 
             dealloc_matrix(subA);
             dealloc_matrix(subB);
         }
 
         /* Recive results */
-        ioffset = joffset = 0;
+        int ioffsetC = 0, joffsetC = 0;
         for (int worker = 1; worker < num_procs; worker++) {
-            int my_n;
+            int my_m, my_n;
+            MPI_Recv(&my_m, 1, MPI_INT, worker, tag, MPI_COMM_WORLD, &status);
             MPI_Recv(&my_n, 1, MPI_INT, worker, tag, MPI_COMM_WORLD, &status);
-            double* subC;
-            alloc_matrix(&subC, my_n, my_n);
-            MPI_Recv(subC, my_n*my_n, MPI_DOUBLE, worker, tag, MPI_COMM_WORLD, &status);
 
-            for (int i = 0; i < my_n; i++) {
+            double* subC;
+            alloc_matrix(&subC, my_m, my_n);
+            MPI_Recv(subC, my_m*my_n, MPI_DOUBLE, worker, tag, MPI_COMM_WORLD, &status);
+
+            for (int i = 0; i < my_m; i++) {
                 for (int j = 0; j < my_n; j++) {
-                    C[(i+ioffset) * n + (j + joffset)] += subC[i*my_n + j];
+                    C[(i+ioffsetC) * n + (j + joffsetC)] += subC[i*my_n + j];
                 }
             }
             dealloc_matrix(subC);
 
             if (worker % sqp == 0) {
-                ioffset += my_n;
-                joffset = 0;
+                ioffsetC += my_m;
+                joffsetC = 0;
             } else {
-                joffset += my_n;
+                joffsetC += my_n;
             }
         }
 
     }
     /* Worker Code */
     else {
-        int my_n;
+        int my_m, my_l, my_n;
+        MPI_Recv(&my_m, 1, MPI_INT, 0, tag, MPI_COMM_WORLD, &status);
+        MPI_Recv(&my_l, 1, MPI_INT, 0, tag, MPI_COMM_WORLD, &status);
         MPI_Recv(&my_n, 1, MPI_INT, 0, tag, MPI_COMM_WORLD, &status);
 
         double* a, *b, *c;
-        alloc_matrix(&a, my_n, my_n);
-        alloc_matrix(&b, my_n, my_n);
-        alloc_matrix(&c, my_n, my_n);
-        MPI_Recv(a, my_n*my_n, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status);
-        MPI_Recv(b, my_n*my_n, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status);
+        alloc_matrix(&a, my_m, my_l);
+        alloc_matrix(&b, my_l, my_n);
+        alloc_matrix(&c, my_m, my_n);
+        MPI_Recv(a, my_m*my_l, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status);
+        MPI_Recv(b, my_l*my_n, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD, &status);
 
-        MatrixMatrixMultiply(my_n, a, b, c, worker_comm);
+        printf("Worker #%d, recived A = \n", my_rank);
+        print_matrix(a, my_m, my_l);
+
+        MatrixMatrixMultiply(my_m, my_l, my_n, a, b, c, worker_comm);
 
         printf("Worker #%d calculated matrices:\n", my_rank);
         print_matrix(c, my_n, my_n);
 
-
+        MPI_Send(&my_m, 1, MPI_INT, 0, tag, MPI_COMM_WORLD);
         MPI_Send(&my_n, 1, MPI_INT, 0, tag, MPI_COMM_WORLD);
-        MPI_Send(c, my_n*my_n, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD);
+        MPI_Send(c, my_m*my_n, MPI_DOUBLE, 0, tag, MPI_COMM_WORLD);
     }
 
     MPI_Barrier(MPI_COMM_WORLD);  /*synchronize all processes*/
@@ -168,7 +190,7 @@ int main(int argc, char* argv[]) {
 
 
 
-void MatrixMatrixMultiply(int n, double *a, double *b, double *c, MPI_Comm comm) {
+void MatrixMatrixMultiply(int my_m, int my_l, int my_n, double *a, double *b, double *c, MPI_Comm comm) {
     int i;
     int npes, dims[2], periods[2];
     int myrank, my2drank, mycoords[2];
@@ -206,46 +228,46 @@ void MatrixMatrixMultiply(int n, double *a, double *b, double *c, MPI_Comm comm)
 
 	/* Perform the initial matrix alignment. First for A and then for B */
     MPI_Cart_shift(comm_2d, 1, -mycoords[0], &shiftsource, &shiftdest);
-    MPI_Sendrecv_replace(a, n*n, MPI_DOUBLE, shiftdest,
+    MPI_Sendrecv_replace(a, my_m*my_l, MPI_DOUBLE, shiftdest,
         1, shiftsource, 1, comm_2d, &status);
 
     MPI_Cart_shift(comm_2d, 0, -mycoords[1], &shiftsource, &shiftdest);
-    MPI_Sendrecv_replace(b, n*n, MPI_DOUBLE,
+    MPI_Sendrecv_replace(b, my_l*my_n, MPI_DOUBLE,
         shiftdest, 1, shiftsource, 1, comm_2d, &status);
 
 
 	/* Get into the main computation loop */
     for (i=0; i<dims[0]; i++) {
-        MatrixMultiply(n, a, b, c); /*c=c+a*b*/
+        MatrixMultiply(my_m, my_l, my_n, a, b, c); /*c=c+a*b*/
 
 	    /* Shift matrix a left by one */
-        MPI_Sendrecv_replace(a, n*n, MPI_DOUBLE,
+        MPI_Sendrecv_replace(a, my_m*my_l, MPI_DOUBLE,
             leftrank, 1, rightrank, 1, comm_2d, &status);
 
 	    /* Shift matrix b up by one */
-        MPI_Sendrecv_replace(b, n*n, MPI_DOUBLE,
+        MPI_Sendrecv_replace(b, my_l*my_n, MPI_DOUBLE,
             uprank, 1, downrank, 1, comm_2d, &status);
     }
 
 	/* Restore the original distribution of a and b */
     MPI_Cart_shift(comm_2d, 1, +mycoords[0], &shiftsource, &shiftdest);
-    MPI_Sendrecv_replace(a, n*n, MPI_DOUBLE,
+    MPI_Sendrecv_replace(a, my_m*my_l, MPI_DOUBLE,
         shiftdest, 1, shiftsource, 1, comm_2d, &status);
     MPI_Cart_shift(comm_2d, 0, +mycoords[1], &shiftsource, &shiftdest);
-    MPI_Sendrecv_replace(b, n*n, MPI_DOUBLE,
+    MPI_Sendrecv_replace(b, my_l*my_n, MPI_DOUBLE,
         shiftdest, 1, shiftsource, 1, comm_2d, &status);
     MPI_Comm_free(&comm_2d); /* Free up communicator */
 }
 
 
 /* This function performs a serial matrix-matrix multiplication c = a*b */
-void MatrixMultiply(int n, double *a, double *b, double *c)
+void MatrixMultiply(int m, int l, int n, double *a, double *b, double *c)
 {
     int i, j, k;
-    for (i=0; i<n; i++)
+    for (i=0; i<m; i++)
         for (j=0; j<n; j++)
-            for (k=0; k<n; k++)
-                c[i*n+j] += a[i*n+k]*b[k*n+j];
+            for (k=0; k<l; k++)
+                c[i*n+j] += a[i*l+k]*b[k*n+j];
 }
 
 void print_matrix(double* A, int m, int n) {

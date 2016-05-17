@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
     /* Master code */
     if (my_rank == 0) {
         cannonDelegateWork(num_procs, m, l, n, A, B);
-        cannonRecieveResults(num_procs, m, l, n, C);
+        cannonRecieveResults(num_procs, m, n, C);
     }
     /* Worker Code */
     else {

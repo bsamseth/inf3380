@@ -34,6 +34,14 @@ the case where the block sizes can't be the same for all processes. The latter i
 by padding out all blocks to the largest block size, filling empty values with zeros. When
 the results is put back into the full matrix `C`, only the non-padding elements
 are stored. This is to ensure that all multiplications of sub blocks are actually defined.  
+### Serial Kernel of Multiplication
+
+In the core of the parallel algorithm is a standard serial matrix-matrix multiplication.
+In this project it was also asked that the implementation used
+[OpenMP](http://openmp.org/wp/) the optimize the triple loop in the standard
+multiplication scheme. In addition to this, the matrix `B` is transposed locally to make
+better use of the cached values in the loop. The code for this can be found in
+[src/matrixmultiply.c](src/matrixmultiply.c).
 
 
 ## Usage

@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/bsamseth/inf3380.svg?branch=master)](https://travis-ci.org/bsamseth/inf3380)
-# Matrix-Matrix Multiplication using MPI
+# Matrix-Matrix Multiplication Using MPI
 
 In this project, an application for matrix-matrix multiplication using MPI has
 been developed. This could be done by either 1D row-wise partitioning, or 2D block
@@ -7,18 +7,19 @@ partitioning of the input matrices. The latter was chosen, implementing
 [Cannon's algorithm](http://cseweb.ucsd.edu/classes/fa12/cse260-b/Lectures/Lec13.pdf)
 for a memory efficient approach.
 
-## The algorithm
+## The Algorithm
 
 We want to compute `C = A x B` in parallel. We do the parallel part by partitioning both
 `A` and `B` into a given number of blocks, one for each worker process.
 Cannon's algorithm is a way to, once every worker process has been given its own blocks
 of the inputs `A` and `B`, systematically shift them between the different processes
 in such a way that we end up with each process having computed its corresponding
-block of the result 'C'.
+block of the result `C`.
 
 We can lay out the algorithm in the following steps:
 
 Given `p` processes laid out in a `sqrt(p) x sqrt(p)` virtual grid:
+
 1. Partition the input matrices into `p` blocks, `a` and `b`, and assign them to the corresponding worker.
 2. Perform an initial alignment:
     1. Shift `a` on process `P(i,j)` `i` columns left (with wraparound).

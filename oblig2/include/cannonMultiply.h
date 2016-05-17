@@ -3,12 +3,10 @@
 
 #include "mpi.h"
 
-void cannonMultiplyMaster(int my_rank, int num_procs, int sqp, int tag,
-                    MPI_Status* status,
-                    double* A, double* B, double* C,
-                    int m, int l, int n);
+void cannonMultiply(int my_m, int my_l, int my_n, double *a, double *b, double *c, MPI_Comm comm);
 
-void cannonMultiplyWorker(int my_rank, int num_procs, int sqp, int tag,
-                    MPI_Status* status);
+void cannonDelegateWork(int num_procs, int m, int l, int n, double *A, double *B);
+
+void cannonRecieveResults(int num_procs, int m, int l, int n, double *C);
 
 #endif

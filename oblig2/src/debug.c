@@ -9,7 +9,7 @@
 void print_matrix(double* A, int m, int n) {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++)
-            printf("%3f ", A[i*n+j]);
+            printf("%3.2f ", A[i*n+j]);
         printf("\n");
     }
 }
@@ -32,7 +32,7 @@ void std_mat(double* A, int m, int n) {
 }
 
 int is_near(double a, double b, double eps) {
-    return fabs(a-b) < eps;
+    return fabs(a-b) < fabs(eps);
 }
 
 int check_equal_content(char *file1, char *file2) {

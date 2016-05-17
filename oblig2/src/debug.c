@@ -46,7 +46,7 @@ int check_equal_content(char *file1, char *file2) {
         return 0;
     }
     for (int i = 0; i < m_A*n_A; i++) {
-        if (!is_near(A[i], B[i], 0.001*A[i]))
+        if (!is_near(A[i], B[i], 0.001))
             return 0;
     }
     return 1;

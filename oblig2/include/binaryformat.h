@@ -1,5 +1,6 @@
 #ifndef BINARY_FORMAT_H
 #define BINARY_FORMAT_H
+/** @file */
 
 #include "stdio.h"
 #include "stdlib.h"

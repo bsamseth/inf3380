@@ -1,5 +1,6 @@
 #ifndef CANNON_MULTIPLY_H
 #define CANNON_MULTIPLY_H
+/** @file */
 
 #include "mpi.h"
 

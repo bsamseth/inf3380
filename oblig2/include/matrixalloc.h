@@ -1,5 +1,6 @@
 #ifndef MATRIX_ALLOC_H
 #define MATRIX_ALLOC_H
+/** @file */
 
 #include "stdio.h"
 #include "stdlib.h"

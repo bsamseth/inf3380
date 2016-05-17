@@ -1,9 +1,10 @@
 #ifndef DEBUG_FUNCTIONS_H
 #define DEBUG_FUNCTIONS_H
+/** @file */
 
 /*
  * These functions serve to part of the application
- * and were only added for debugging purposes.
+ * and were only added for debugging purposes.s
  */
 void print_matrix(double* A, int m, int n);
 void rand_mat(double* A, int m, int n, int MAX_VALUE);

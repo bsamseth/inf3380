@@ -43,7 +43,7 @@ script:
   #- cmake -Dcoverage=ON -DCMAKE_CXX_COMPILER=$COMPILER $PARENTDIR
   - cmake -Dcoverage=ON $PARENTDIR
   - make
-  - ./tests.x
+  #- ./tests.x
 
 after_success:
   - lcov --directory $PARENTDIR/build --capture --output-file coverage.info # capture coverage info

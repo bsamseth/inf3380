@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(matrixMultiply)
+project(MatrixMultiply)
 
 enable_language(C)
 find_package(MPI)
@@ -40,8 +40,8 @@ target_link_libraries(read_print.x engine)
 add_executable(write_mat.x app/write_mat.c)
 target_link_libraries(write_mat.x engine)
 
-add_executable(unit_tests.x ${TESTFILES})
-target_link_libraries(unit_tests.x engine)
+add_executable(tests.x ${TESTFILES})
+target_link_libraries(tests.x engine)
 
 
 add_custom_target(
@@ -56,7 +56,7 @@ add_custom_target(
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     )
 
-add_dependencies(coverage unit_tests.x)
+add_dependencies(coverage tests.x)
 
 
 # add a target to generate API documentation with Doxygen

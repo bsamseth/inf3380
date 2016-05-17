@@ -10,7 +10,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libopencv-dev
   - test -n $CC && unset CC
-  
+
 env:
   - OMP_NUM_THREADS=4
 
@@ -43,7 +43,7 @@ script:
   #- cmake -Dcoverage=ON -DCMAKE_CXX_COMPILER=$COMPILER $PARENTDIR
   - cmake -Dcoverage=ON $PARENTDIR
   - make
-  - ./unit_tests.x
+  - ./tests.x
 
 after_success:
   - lcov --directory $PARENTDIR/build --capture --output-file coverage.info # capture coverage info

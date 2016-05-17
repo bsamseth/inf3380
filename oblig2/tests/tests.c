@@ -5,17 +5,19 @@
 #include "matrixalloc.h"
 #include "matrixmultiply.h"
 
-int integration_sanity_check();
+int alloc_multiply_test();
+int fullTest();
 
 int main(int argc, char *argv[]) {
     int error = 0;
-    error += integration_sanity_check();
+    error += alloc_multiply_test();
+    error += fullTest();
     return error;
 }
 
 
-int integration_sanity_check() {
-    printf("Running: integration sanity check");
+int alloc_multiply_test() {
+    printf("Running: allocation + multiplication test");
     const int m = 7;
     const int l = 8;
     const int n = 6;
@@ -45,6 +47,12 @@ int integration_sanity_check() {
             printf("\nError: multiply gives wrong result at element %d\n", i);
             printf("Expected: %f\n", expected[i]);
             printf("Acutal: %f\n", C[i]);
+            printf("A = \n");
+            print_matrix(A, m, l);
+            printf("B = \n");
+            print_matrix(B, l, n);
+            printf("C = \n");
+            print_matrix(C, m, n);
             return 1;
         }
     }
@@ -53,6 +61,22 @@ int integration_sanity_check() {
     dealloc_matrix(B);
     dealloc_matrix(C);
 
+    printf(" -> OK\n");
+    return 0;
+}
+
+
+int fullTest() {
+    printf("Running: full test (large_a x large_b = large_c)");
+    system("mpirun -n 10 main.x ../input/large_matrix_a.bin ../input/large_matrix_b.bin out_from_unit_test.bin");
+
+    char answer [50] = "out_from_unit_test.bin";
+    char correct [50] = "../input/large_matrix_c.bin";
+
+    if (!check_equal_content(answer, correct)) {
+        printf("\nError: produced file is different from fasit\n");
+        return 1;
+    }
     printf(" -> OK\n");
     return 0;
 }
